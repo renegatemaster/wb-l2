@@ -32,7 +32,7 @@ type User struct {
 	Card *Card
 }
 
-func (user User) GetBalance() float64 {
+func (user *User) GetBalance() float64 {
 	return user.Card.Balance
 }
 
@@ -42,7 +42,7 @@ type Card struct {
 	Bank    *Bank
 }
 
-func (card Card) CheckBalance() error {
+func (card *Card) CheckBalance() error {
 	fmt.Printf("[%s] Запрос в банк для проверки остатка %s\n", card.Name, card.Bank.Name)
 	return card.Bank.CheckBalance(card.Name)
 }
@@ -52,7 +52,7 @@ type Bank struct {
 	Cards []Card
 }
 
-func (bank Bank) CheckBalance(cardName string) error {
+func (bank *Bank) CheckBalance(cardName string) error {
 	fmt.Printf("[%s] Получение остатка по карте [%s]\n", bank.Name, cardName)
 	for _, card := range bank.Cards {
 		if card.Name != cardName {
@@ -82,7 +82,7 @@ type Shop struct {
 Пользователю нужно лишь назвать себя и товар,
 Вся логика происходит внутри метода
 */
-func (shop Shop) Sell(user User, product string) error {
+func (shop *Shop) Sell(user User, product string) error {
 
 	fmt.Printf("[%s] Проверка баланса пользователя [%s]\n", shop.Name, user.Name)
 	err := user.Card.CheckBalance()
@@ -98,7 +98,6 @@ func (shop Shop) Sell(user User, product string) error {
 		if prod.Price > user.GetBalance() {
 			return errors.New("на карте недостаточно средств для покупки")
 		}
-		user.Card.Balance = user.Card.Balance - prod.Price
 		fmt.Printf("[%s] был куплен [%s]\n", prod.Name, user.Name)
 		return nil
 	}
